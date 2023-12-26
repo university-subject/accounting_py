@@ -107,12 +107,13 @@
           <label for="category">分類：</label>
           <select id="category" name="category" class="p-2">
             <option value="all">全部</option>
-            <option value="食物">食物</option>
-            <option value="住房">住房</option>
-            <option value="交通">交通</option>
+            {% for x in category.name %}
+            <option value="{{ x }}">{{ x }}</option>
+            {% endfor %}
+            
             <!-- 添加更多的分類選項 -->
           </select>
-          <button onclick="show()" class = "btn ms-3">篩選</button>
+          <button onclick="show()" class = "btn ms-3" type="button">篩選</button>
         </div>
       </form>
       <table id="transactionTable">
@@ -247,5 +248,7 @@
       } 
     })
 </script>
+
+
 </body>
 </html>
