@@ -6,7 +6,7 @@ function a(din, dout, pin, pout){
   var datapout = Array(7);
   datapin.fill(pin);
   datapout.fill(pout);
-  wChart = echarts.init(itx);
+  wChart = echarts.init(itx, 'jay');
   wChart.setOption({
     xAxis: [{
       type: 'category',
@@ -83,7 +83,7 @@ function b(din, dout, pin, pout){
   var datapout = Array(len);
   datapin.fill(pin);
   datapout.fill(pout);
-  mChart = echarts.init(itx);
+  mChart = echarts.init(itx, 'jay');
   mChart.setOption({
     xAxis: [{
       type: 'category',
@@ -157,7 +157,7 @@ function c(din, dout, pin, pout){
   var datapout = Array(12);
   datapin.fill(pin);
   datapout.fill(pout);
-  yChart = echarts.init(itx);
+  yChart = echarts.init(itx, 'jay');
   yChart.setOption({
     xAxis: [{
       type: 'category',
@@ -235,6 +235,8 @@ function getData(obj){
   var s_month = new Array(monthDay).fill(0);
   var i_year = new Array(12).fill(0);
   var s_year = new Array(12).fill(0);
+  var the_week = week();
+  console.log(the_week)
   for(var i = 0; i < obj.length; i++){
     var time = obj[i].date.split('-');
     if(sameYear(obj[i].date)){
@@ -257,15 +259,14 @@ function getData(obj){
         }
       }
     }
-    if(week().includes(obj[i].date)){
-      var weekDay = new Date(obj[i].date).getDay;
-      if(weekDay == 0) weekDay = 7;
+    if(the_week.includes(obj[i].date)){
+      var weekDay = the_week.indexOf(obj[i].date);
       if(obj[i].types == '收入'){
-        i_week[weekDay-1] += obj[i].amount;
+        i_week[weekDay] += obj[i].amount;
         iaw += obj[i].amount;
       }
       else{
-        s_week[weekDay-1] += obj[i].amount;
+        s_week[weekDay] += obj[i].amount;
         saw += obj[i].amount;
       }
     }
@@ -274,6 +275,7 @@ function getData(obj){
       else s_day += obj[i].amount;
     }
   }
+  console.log(i_week, s_week);
   var data = {ia: [i_day, iaw, iam, iay], sa: [s_day, saw, sam, say], iw: sums(i_week), sw: sums(s_week), im: sums(i_month), sm: sums(s_month), iy: sums(i_year), sy: sums(s_year)};
   return data;
   
