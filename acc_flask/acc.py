@@ -210,6 +210,32 @@ def showdata():
     user_records = get_user_records()
     return render_template('showdata.html', records=user_records)
 
+@app.route('/edit')
+def edit():
+    return render_template('edit_cate.html', category=category)
+
+@app.route('/delete_record/<cate_name>')
+@login_required
+def delete_cate(cate_name):
+    global records
+    global category
+    category['name'] = [r for r in category['name'] if r != cate_name]
+    records[current_user.id] = [r for r in records[current_user.id] if r['categories'] != cate_name or r['user_id'] != current_user.id]
+    return redirect(url_for('edit'))
+
+@app.route('/edit_cate', methods=['POST'])
+def edit_cate():
+    global records
+    global category
+    old = request.form['oldCate']
+    new = request.form['newCate']
+    idx = category['name'].index(old)
+    category['name'][idx] = new
+    for r in records[current_user.id]:
+        if r['categories'] == old and r['user_id'] == current_user.id:
+            r['categories'] = new
+    return redirect(url_for('edit'))
+
 def read_txt_file(file_path):
     try:
         with open(file_path, 'r') as file:
