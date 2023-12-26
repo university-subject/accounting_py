@@ -1,5 +1,6 @@
 # pip install Flask-Login Flask-WTF
 # pip install flask
+# pip install pyngrok
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -173,9 +174,6 @@ def edit_record(record_id):
         if request.method == 'POST':
             record['date'] = request.form['date']
             record['amount'] = float(request.form['amount'])
-            record['types'] = request.form['types']
-            record['categories'] = request.form['categories']
-            record['notes'] = request.form['notes']
             save_to_json(records_file_name, records)
             return redirect(url_for('index'))
         return render_template('edit.html', record=record)
@@ -185,7 +183,7 @@ def edit_record(record_id):
 @login_required
 def delete_record(record_id):
     global records
-    records = [r for r in records if r['id'] != record_id or r['user_id'] != current_user.id]
+    records[current_user.id] = [r for r in records[current_user.id] if r['id'] != record_id or r['user_id'] != current_user.id]
     save_to_json(records_file_name, records)
     return redirect(url_for('index'))
 
