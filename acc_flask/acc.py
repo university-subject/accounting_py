@@ -154,8 +154,11 @@ def add_record():
     global next_id
     date = request.form['date']
     amount = float(request.form['amount'])
+    types = request.form['types']
+    categories = request.form['categories']
+    notes = request.form['notes']
 
-    new_record = {'id': next_id, 'date': date, 'amount': amount, 'types': '收入', 'user_id': current_user.id, 'categories': '工資', 'notes': '一月份薪水'}
+    new_record = {'id': next_id, 'date': date, 'amount': amount, 'types': types, 'user_id': current_user.id, 'categories': categories, 'notes': notes}
     if records.get(current_user.id) == None:
         records[current_user.id] = []
     records[current_user.id].append(new_record)
