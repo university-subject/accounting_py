@@ -79,8 +79,8 @@
                                 </div>
                                 <div class="d-flex justify-content-center flex-fill">
                                     <select id="types" name="types" class="rounded p-2">
-                                        <option value="income">收入</option>
-                                        <option value="expense">支出</option>
+                                        <option value="收入">收入</option>
+                                        <option value="支出">支出</option>
                                     </select>
                                 </div>
                                 <div class="d-flex justify-content-center fs-3">
@@ -94,10 +94,12 @@
                                     <label for="category">分類：</label>
                                 </div>
                                 <div class="d-flex justify-content-center lh-lg flex-fill">
-                                    <select id="categories" name="categories" class="rounded p-2">
-                                        <option value="category1">Category 1</option>
-                                        <option value="category2">Category 2</option>
-                                    </select>
+                                    <input class="form-control" list="datalistOptions" id="categories" name="categories" class="rounded p-2">
+                                    <datalist id="datalistOptions">
+                                        {% for x in category.name %}
+                                        <option value="{{ x }}">
+                                        {% endfor %}
+                                    </datalist>
                                 </div>
                                 <div id="catagoryError" class="error d-flex justify-content-center"></div>
                                 <div class="d-flex justify-content-center fs-3">
@@ -125,8 +127,8 @@
         </div>
     </main>
         <script>
-            var today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
+            var formattedDate =  new Intl.DateTimeFormat("fr-CA", {year: "numeric", month: "2-digit", day: "2-digit"}).format(new Date());
+            document.getElementById('date').value = formattedDate;
             function checkAmount() {
                 var enteredAmount = parseFloat(document.getElementById('amount').value);
                 var amountInput = document.getElementById('amount');

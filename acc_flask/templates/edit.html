@@ -25,6 +25,8 @@
             color: #CAF0F8; /* Blue label text color */
             font-weight: bold;
         }
+        
+        #categories,
         input[type="date"],
         input[type="number"],
         input[type="text"],
@@ -61,11 +63,11 @@
         <label for="types">收支類型：</label>
         <select id="types" name="types">
           {% if record.types == '收入' %}
-          <option value="income" selected>收入</option>
-          <option value="expense">支出</option>
+          <option value="收入" selected>收入</option>
+          <option value="支出">支出</option>
           {% else %}
-          <option value="income">收入</option>
-          <option value="expense" selected>支出</option>
+          <option value="收入">收入</option>
+          <option value="支出" selected>支出</option>
           {% endif %}
         </select><br><br>
 
@@ -73,7 +75,12 @@
         <input type="number" id="amount" name="amount" value="{{ record.amount }}" required><br><br>
 
         <label for="categories">分類: </label>
-        <input type="text" id="categories" name="categories"  value="{{ record.categories }}" required><br><br>
+        <input list="datalistOptions" id="categories" name="categories" class="rounded p-2" value="{{ record.categories }}" required><br><br>
+        <datalist id="datalistOptions">
+        {% for x in category.name %}
+            <option value="{{ x }}">
+        {% endfor %}
+        </datalist>
         
         <label for="note">事由: </label>
         <input type="text" id="notes" name="notes"  value="{{ record.notes }}"><br><br>
