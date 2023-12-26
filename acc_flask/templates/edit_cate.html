@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>記帳</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+    <style type="text/css">
+        body {
+            background-color: #03045E;
+            font-family: 'Arial', sans-serif;
+        }
+        .b1 {
+            background-color: #023E8A;
+        }
+        .btn {
+            background-color: #0096C7;
+            color: white;
+            border-color: #ccc;
+        }
+        label {
+            color:white;
+            font-weight: 700;
+        }
+        .error{
+            color:red;
+            margin-top: 5px;
+        }
+        .error-border {
+            border: 2px solid red;
+        }
+        .navbar-brand {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(0, 0, 0, .25);
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+        }
+        table{
+            color: white!important;
+        }
+        .modal-content {
+            color:white;
+            background-color: #03045E;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="navbar navbar-dark bg-primary bg-gradient flex-md-nowrap p-0 shadow align-items-stretch text-center">
+        <a class="navbar-brand me-0 px-3 fs-5" href="{{ url_for('index') }}">Menu</a>
+        <span class="navbar-text fs-3 flex-fill">分類管理</span>
+        <a class="navbar-brand me-0 px-3 fs-5" href="#formModal" data-bs-toggle="modal" role="button">修改</a>
+    </header>
+    <main>
+        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModal" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="formModal">修改分類</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form action="{{ url_for('edit_cate') }}" method="post">
+                    <div class="mb-3">
+                        <label for="amount" class="col-form-label">原分類名:</label>
+                        <input class="form-control" list="datalistOptions" id="oldCate" name="oldCate" class="rounded p-2">
+                        <datalist id="datalistOptions">
+                        {% for x in category.name %}
+                            <option value="{{ x }}">
+                        {% endfor %}
+                        </datalist>
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="col-form-label">新分類名:</label>
+                        <input type="text" class="form-control" id="newCate" name="newCate">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <input type="submit" value="儲存" class="btn btn-primary">
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="container-fluid">
+            <div class="row pt-3">
+                <div class="col"></div>
+                <div class="col-md-9 b1 text-center">
+                    <table class="table table-bordered mt-3">
+                        <thead>
+                          <tr>
+                            <th scope="col">類別名稱</th>
+                            <th scope="col">刪除</th>
+                          </tr>
+                        </thead>
+                        <tbody id="tb">
+                            {% for x in category.name %}
+                            <tr>
+                                <td>{{ x }}</td>
+                                <td><a href="{{ url_for('delete_cate', cate_name=x) }}" class="btn btn-default me-5 px-4 px-sm-5" role="button">刪除</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col"></div>
+            </div>
+        </div>
+    </main>
+    <script>
+        var category = {{category|tojson}};
+        var table = document.getElementById("tb");
+        function show() {
+        for (i = 0; i < records.length; i++) {
+            
+        }
+    }
+        </script>
+    </div>
+</body>
+</html>
