@@ -177,8 +177,13 @@ def edit_record(record_id):
         if request.method == 'POST':
             record['date'] = request.form['date']
             record['amount'] = float(request.form['amount'])
+            record['types'] = request.form['types']
+            record['categories'] = request.form['categories']
+            if request.form['categories'] not in category['name']:
+                category['name'].append(request.form['categories'])
+            record['notes'] = request.form['notes']
             save_to_json(records_file_name, records)
-            return redirect(url_for('index'))
+            return redirect(url_for('showdata'))
         return render_template('edit.html', record=record, category=category)
     return 'Record not found', 404
 
@@ -188,7 +193,7 @@ def delete_record(record_id):
     global records
     records[current_user.id] = [r for r in records[current_user.id] if r['id'] != record_id or r['user_id'] != current_user.id]
     save_to_json(records_file_name, records)
-    return redirect(url_for('index'))
+    return redirect(url_for('showdata'))
 
 @app.route('/chart')
 def chart():
@@ -217,7 +222,7 @@ def showdata():
 def edit():
     return render_template('edit_cate.html', category=category)
 
-@app.route('/delete_record/<cate_name>')
+@app.route('/delete_cate/<cate_name>')
 @login_required
 def delete_cate(cate_name):
     global records
