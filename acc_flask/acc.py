@@ -123,6 +123,7 @@ records = {
 pre_records = {
     'income': [0,0,0,0], 'spend': [0,0,0,0]
     }
+category = {'name':['食物','住房','交通','工資']}
 next_id = 3
 login = False
 
@@ -146,7 +147,7 @@ def get_user_records()->list:
 def index():
     # user_records = [record for record in records if record['user_id'] == current_user.id]
     user_records = get_user_records()
-    return render_template('index.html', records=user_records)
+    return render_template('index.html', records=user_records, category=category)
 
 @app.route('/add_record', methods=['POST'])
 @login_required
@@ -156,6 +157,8 @@ def add_record():
     amount = float(request.form['amount'])
     types = request.form['types']
     categories = request.form['categories']
+    if categories not in category['name']:
+        category['name'].append(categories)
     notes = request.form['notes']
 
     new_record = {'id': next_id, 'date': date, 'amount': amount, 'types': types, 'user_id': current_user.id, 'categories': categories, 'notes': notes}
@@ -176,7 +179,7 @@ def edit_record(record_id):
             record['amount'] = float(request.form['amount'])
             save_to_json(records_file_name, records)
             return redirect(url_for('index'))
-        return render_template('edit.html', record=record)
+        return render_template('edit.html', record=record, category=category)
     return 'Record not found', 404
 
 @app.route('/delete_record/<int:record_id>')
@@ -208,7 +211,7 @@ def add_pre_record():
 @app.route('/showdata')
 def showdata():
     user_records = get_user_records()
-    return render_template('showdata.html', records=user_records)
+    return render_template('showdata.html', records=user_records, category=category)
 
 @app.route('/edit')
 def edit():
