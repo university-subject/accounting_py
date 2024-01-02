@@ -121,9 +121,11 @@ records = {
     # {'id': 2, 'date': '2023-12-24', 'amount': 50.0, 'types': '支出', 'user_id': 1, 'categories': '食物', 'notes': '午餐'}]
     }
 pre_records = {
-    'income': [0,0,0,0], 'spend': [0,0,0,0]
+    #'income': [0,0,0,0], 'spend': [0,0,0,0]
     }
-category = {'name':['食物','住房','交通','工資']}
+category = {
+    #'name':['食物','住房','交通','工資']
+    }
 next_id = 3
 login = False
 
@@ -140,6 +142,20 @@ def get_user_records()->list:
         records[current_user.id] = []
     return user_records
 
+def get_user_pre_records()->list:
+    user_pre_records = pre_records.get(current_user.id)
+    if user_pre_records == None:
+        user_pre_records = {'income': [0,0,0,0], 'spend': [0,0,0,0]}
+        pre_records[current_user.id] = {'income': [0,0,0,0], 'spend': [0,0,0,0]}
+    return user_pre_records
+
+def get_user_category()->list:
+    user_category = category.get(current_user.id)
+    if user_category == None:
+        user_category = {'name':['食物','住房','交通','工資']}
+        category[current_user.id] = {'name':['食物','住房','交通','工資']}
+    return user_category
+
 # 首頁，顯示所有記錄
 # 登入後才能進入的頁面
 @app.route('/')
@@ -147,7 +163,8 @@ def get_user_records()->list:
 def index():
     # user_records = [record for record in records if record['user_id'] == current_user.id]
     user_records = get_user_records()
-    return render_template('index.html', records=user_records, category=category)
+    user_category = get_user_category()
+    return render_template('index.html', records=user_records, category=user_category)
 
 @app.route('/add_record', methods=['POST'])
 @login_required
@@ -157,8 +174,8 @@ def add_record():
     amount = float(request.form['amount'])
     types = request.form['types']
     categories = request.form['categories']
-    if categories not in category['name']:
-        category['name'].append(categories)
+    if categories not in category[current_user.id]['name']:
+        category[current_user.id]['name'].append(categories)
     notes = request.form['notes']
 
     new_record = {'id': next_id, 'date': date, 'amount': amount, 'types': types, 'user_id': current_user.id, 'categories': categories, 'notes': notes}
@@ -172,14 +189,20 @@ def add_record():
 @app.route('/edit_record/<int:record_id>', methods=['GET', 'POST'])
 @login_required
 def edit_record(record_id):
+    user_category = get_user_category()
     record = next((r for r in records[current_user.id] if r['id'] == record_id and r['user_id'] == current_user.id), None)
     if record:
         if request.method == 'POST':
             record['date'] = request.form['date']
             record['amount'] = float(request.form['amount'])
+            record['types'] = request.form['types']
+            record['categories'] = request.form['categories']
+            if request.form['categories'] not in category[current_user.id]['name']:
+                category[current_user.id]['name'].append(request.form['categories'])
+            record['notes'] = request.form['notes']
             save_to_json(records_file_name, records)
-            return redirect(url_for('index'))
-        return render_template('edit.html', record=record, category=category)
+            return redirect(url_for('showdata'))
+        return render_template('edit.html', record=record, category=user_category)
     return 'Record not found', 404
 
 @app.route('/delete_record/<int:record_id>')
@@ -188,12 +211,13 @@ def delete_record(record_id):
     global records
     records[current_user.id] = [r for r in records[current_user.id] if r['id'] != record_id or r['user_id'] != current_user.id]
     save_to_json(records_file_name, records)
-    return redirect(url_for('index'))
+    return redirect(url_for('showdata'))
 
 @app.route('/chart')
 def chart():
     user_records = get_user_records()
-    return render_template('chart.html', records = user_records, pre_records = pre_records)
+    user_pre_records = get_user_pre_records()
+    return render_template('chart.html', records = user_records, pre_records = user_pre_records)
 
 @app.route('/add_pre_record', methods=['POST'])
 def add_pre_record():
@@ -202,27 +226,29 @@ def add_pre_record():
     week = request.form['Wamount']
     month = request.form['Mamount']
     year = request.form['Yamount']
-    if day != "": pre_records[types][0] = float(day)
-    if week != "": pre_records[types][1] = float(week)
-    if month != "": pre_records[types][2] = float(month)
-    if year != "": pre_records[types][3] = float(year)
+    if day != "": pre_records[current_user.id][types][0] = float(day)
+    if week != "": pre_records[current_user.id][types][1] = float(week)
+    if month != "": pre_records[current_user.id][types][2] = float(month)
+    if year != "": pre_records[current_user.id][types][3] = float(year)
     return redirect(url_for('chart'))
 
 @app.route('/showdata')
 def showdata():
     user_records = get_user_records()
-    return render_template('showdata.html', records=user_records, category=category)
+    user_category = get_user_category()
+    return render_template('showdata.html', records=user_records, category=user_category)
 
 @app.route('/edit')
 def edit():
-    return render_template('edit_cate.html', category=category)
+    user_category = get_user_category()
+    return render_template('edit_cate.html', category=user_category)
 
-@app.route('/delete_record/<cate_name>')
+@app.route('/delete_cate/<cate_name>')
 @login_required
 def delete_cate(cate_name):
     global records
     global category
-    category['name'] = [r for r in category['name'] if r != cate_name]
+    category[current_user.id]['name'] = [r for r in category[current_user.id]['name'] if r != cate_name]
     records[current_user.id] = [r for r in records[current_user.id] if r['categories'] != cate_name or r['user_id'] != current_user.id]
     return redirect(url_for('edit'))
 
@@ -232,11 +258,12 @@ def edit_cate():
     global category
     old = request.form['oldCate']
     new = request.form['newCate']
-    idx = category['name'].index(old)
-    category['name'][idx] = new
-    for r in records[current_user.id]:
-        if r['categories'] == old and r['user_id'] == current_user.id:
-            r['categories'] = new
+    if new != "":
+        idx = category[current_user.id]['name'].index(old)
+        category[current_user.id]['name'][idx] = new
+        for r in records[current_user.id]:
+            if r['categories'] == old and r['user_id'] == current_user.id:
+                r['categories'] = new
     return redirect(url_for('edit'))
 
 def read_txt_file(file_path):

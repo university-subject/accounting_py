@@ -24,13 +24,6 @@
             color:white;
             font-weight: 700;
         }
-        .error{
-            color:red;
-            margin-top: 5px;
-        }
-        .error-border {
-            border: 2px solid red;
-        }
         .navbar-brand {
             display: inline-flex;
             align-items: center;
@@ -100,7 +93,7 @@
                             {% for x in category.name %}
                             <tr>
                                 <td>{{ x }}</td>
-                                <td><a href="{{ url_for('delete_cate', cate_name=x) }}" class="btn btn-default me-5 px-4 px-sm-5" role="button">刪除</a></td>
+                                <td><a href="{{ url_for('delete_cate', cate_name=x) }}" class="btn btn-default px-4 px-sm-5" role="button">刪除</a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -110,15 +103,5 @@
             </div>
         </div>
     </main>
-    <script>
-        var category = {{category|tojson}};
-        var table = document.getElementById("tb");
-        function show() {
-        for (i = 0; i < records.length; i++) {
-            
-        }
-    }
-        </script>
-    </div>
 </body>
 </html>
