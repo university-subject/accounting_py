@@ -237,11 +237,12 @@ def edit_cate():
     global category
     old = request.form['oldCate']
     new = request.form['newCate']
-    idx = category['name'].index(old)
-    category['name'][idx] = new
-    for r in records[current_user.id]:
-        if r['categories'] == old and r['user_id'] == current_user.id:
-            r['categories'] = new
+    if new != "":
+        idx = category['name'].index(old)
+        category['name'][idx] = new
+        for r in records[current_user.id]:
+            if r['categories'] == old and r['user_id'] == current_user.id:
+                r['categories'] = new
     return redirect(url_for('edit'))
 
 def read_txt_file(file_path):
