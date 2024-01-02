@@ -38,7 +38,7 @@ class User(UserMixin):
         self.password = password
 
 users = [
-    User(1, 'zzzz', 'zzzzzz'),
+    # User(1, 'zzzz', 'zzzzzz'),
     # User(2, 'user2', 'password2')
 ]
 
